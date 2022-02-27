@@ -1,0 +1,20 @@
+
+character.png
+size: 202,141
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Layer 57
+  rotate: true
+  xy: 106, 10
+  size: 129, 94
+  orig: 129, 94
+  offset: 0, 0
+  index: -1
+Layer 57 copy 2
+  rotate: true
+  xy: 2, 2
+  size: 137, 102
+  orig: 143, 108
+  offset: 3, 3
+  index: -1
