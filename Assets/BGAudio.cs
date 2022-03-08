@@ -1,12 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BGAudio : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static BGAudio Instance { get; private set; }
+    public AudioSource Source;
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+        Source = GetComponent<AudioSource>();
         DontDestroyOnLoad(gameObject);
     }
 }

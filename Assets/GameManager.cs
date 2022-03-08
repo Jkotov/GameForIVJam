@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using JetBrains.Annotations;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    
+    public delegate void SolveHandle();
+    [CanBeNull] public event SolveHandle Solved;
     public static GameManager Instance { get; private set; }
     [SerializeField] private List<Collider2D> doors = new List<Collider2D>();
     [HideInInspector] public string nextScene;
@@ -22,8 +26,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float bottomBgFirstPos;
     [SerializeField] private float upBgFirstPos;
     [SerializeField] private float firstDuration;
-    [SerializeField] private AudioClip firstAudio;
-    
+
     [HideInInspector] public float playerYMove;
     [HideInInspector] public Transform openingDoor;
     [HideInInspector] public SpriteRenderer doorShadow;
@@ -36,8 +39,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float bottomBgEndPos;
     [SerializeField] private float upBgEndPos;
     [SerializeField] private float endDuration;
-    [SerializeField] private AudioClip endAudio;
-    private AudioSource _audioSource;
     
     [SerializeField] private SkeletonAnimation anim;
     private void Awake()
@@ -55,15 +56,9 @@ public class GameManager : MonoBehaviour
             door.enabled = false;
         }
 
-        _audioSource = GetComponent<AudioSource>();
         StartCoroutine(MoveToDoor());
     }
 
-    IEnumerator FirstVoice()
-    {
-        yield return new WaitForSeconds(4);
-        _audioSource.PlayOneShot(firstAudio);
-    }
 
     private IEnumerator MoveToDoor()
     {
@@ -73,7 +68,6 @@ public class GameManager : MonoBehaviour
         bottomBg.DOMoveX(bottomBgFirstPos, firstDuration);
         upBg.DOMoveX(upBgFirstPos, firstDuration);
         anim.AnimationName = "animation";
-        StartCoroutine(FirstVoice());
         yield return new WaitForSeconds(firstDuration);
         
         foreach (var door in doors)
@@ -92,6 +86,7 @@ public class GameManager : MonoBehaviour
     }
     public void ResumeMove()
     {
+        Solved?.Invoke();
         StartCoroutine(YMove());
     }
     public IEnumerator YMove()
@@ -112,10 +107,7 @@ public class GameManager : MonoBehaviour
         liane.DOMoveX(lianeEndPos, endDuration);
         bottomBg.DOMoveX(bottomBgEndPos, endDuration);
         upBg.DOMoveX(upBgEndPos, endDuration);
-        _audioSource.PlayOneShot(endAudio);
         yield return new WaitForSeconds(endDuration);
         SceneManager.LoadScene(nextScene);
     }
-    
-    
 }
